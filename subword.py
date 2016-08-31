@@ -6,25 +6,25 @@ import time
 import math
 import re
 
-dict = {}  # ½¨Á¢×Öµä
-filelist = {}  # ½¨Á¢×Öµä£¬¼üÖµÊÇÀàÃû£¬ÖµÎªÎÄ¼şÃû
-MaxWordLen = 4  # ×î´ó´ÊÓï³¤¶È
+dict = {}  # å»ºç«‹å­—å…¸
+filelist = {}  # å»ºç«‹å­—å…¸ï¼Œé”®å€¼æ˜¯ç±»åï¼Œå€¼ä¸ºæ–‡ä»¶å
+MaxWordLen = 4  # æœ€å¤§è¯è¯­é•¿åº¦
 WordSum = 0
 
 
 def establish_dict(dictfile):
-    '''ÊäÈë×ÖµäÎÄ¼şµÄÂ·¾¶£¬´´½¨×ÖµäÁĞ±í'''
+    '''è¾“å…¥å­—å…¸æ–‡ä»¶çš„è·¯å¾„ï¼Œåˆ›å»ºå­—å…¸åˆ—è¡¨'''
     fd = codecs.open(dictfile, "r", "gbk")
-    texts = fd.readlines()  # ¶ÁÈ¡×ÖµäÎÄ¼şÈëlist
+    texts = fd.readlines()  # è¯»å–å­—å…¸æ–‡ä»¶å…¥list
     for word in texts:
         word = word[:-2]
-        dict[word] = [0, 0, 0]  # µÚÒ»¸öÖµÓÃÀ´¼ÆËãtf,µÚ¶ş¸öÖµÓÃÀ´¼ÆËãidf,µÚÈı¸öÖµÓÃÀ´±êÊ¶ÊÇ·ñÀÛ¼ÓÎÄµµ¼ÆÊı
+        dict[word] = [0, 0, 0]  # ç¬¬ä¸€ä¸ªå€¼ç”¨æ¥è®¡ç®—tf,ç¬¬äºŒä¸ªå€¼ç”¨æ¥è®¡ç®—idf,ç¬¬ä¸‰ä¸ªå€¼ç”¨æ¥æ ‡è¯†æ˜¯å¦ç´¯åŠ æ–‡æ¡£è®¡æ•°
     return dict
 
 
 def findfiles(rootdir):
-    '''ÊäÈëÎÄ¼şÂ·¾¶£¬ÕÒÑ°Â·¾¶ÏÂËùÓĞÎÄ¼şµÄÎÄ¼şÃû£¬²¢·µ»ØÎÄ¼şÃûÁĞ±í'''
-    for parent, dirnames, filenames in os.walk(rootdir):  # Èı¸ö²ÎÊı£º·Ö±ğ·µ»Ø1.¸¸Ä¿Â¼ 2.ËùÓĞÎÄ¼ş¼ĞÃû×Ö£¨²»º¬Â·¾¶£© 3.ËùÓĞÎÄ¼şÃû×Ö
+    '''è¾“å…¥æ–‡ä»¶è·¯å¾„ï¼Œæ‰¾å¯»è·¯å¾„ä¸‹æ‰€æœ‰æ–‡ä»¶çš„æ–‡ä»¶åï¼Œå¹¶è¿”å›æ–‡ä»¶ååˆ—è¡¨'''
+    for parent, dirnames, filenames in os.walk(rootdir):  # ä¸‰ä¸ªå‚æ•°ï¼šåˆ†åˆ«è¿”å›1.çˆ¶ç›®å½• 2.æ‰€æœ‰æ–‡ä»¶å¤¹åå­—ï¼ˆä¸å«è·¯å¾„ï¼‰ 3.æ‰€æœ‰æ–‡ä»¶åå­—
         for dirname in dirnames:
             # print dirname
             filelist[dirname] = []
@@ -36,25 +36,25 @@ def findfiles(rootdir):
 
 
 def ans(testword):
-    '''×î´ó·´ÏòÆ¥Åä²âÊÔÃ¿¸ö²âÊÔ×Ö·û´®ÖĞÊÇ·ñ´æÔÚ·Ö´Ê'''
+    '''æœ€å¤§åå‘åŒ¹é…æµ‹è¯•æ¯ä¸ªæµ‹è¯•å­—ç¬¦ä¸²ä¸­æ˜¯å¦å­˜åœ¨åˆ†è¯'''
     global WordSum
     for i in range(len(testword)):
         word = testword[i:]
         if word in dict:
-            dict[word][0] += 1  # tf¼ÆÊıÆ÷¼Ó1
+            dict[word][0] += 1  # tfè®¡æ•°å™¨åŠ 1
             WordSum += 1
-            if dict[word][2] == 0:  # Èç¹ûÎÄ¼şÀÛ¼ÓÔÊĞí
-                dict[word][1] += 1  # idf¼ÆÊıÆ÷¼Ó1
-                dict[word][2] = 1  # ´ËÆªÎÄµµÒÑ¼ÓÈëÎÄµµ¼ÆÊı¡£ÎÄµµ¼ÆÊıÔÊĞíÖÃ1
+            if dict[word][2] == 0:  # å¦‚æœæ–‡ä»¶ç´¯åŠ å…è®¸
+                dict[word][1] += 1  # idfè®¡æ•°å™¨åŠ 1
+                dict[word][2] = 1  # æ­¤ç¯‡æ–‡æ¡£å·²åŠ å…¥æ–‡æ¡£è®¡æ•°ã€‚æ–‡æ¡£è®¡æ•°å…è®¸ç½®1
             break
     return len(testword) - i
 
 
 def _subword(line, filename):
-    '''½«Ö¸¶¨×Ö·û´®·Ö´Ê'''
+    '''å°†æŒ‡å®šå­—ç¬¦ä¸²åˆ†è¯'''
     result = []
     line = re.sub("<.*?>".decode("gbk"), "".decode("gbk"), line)
-    line = re.sub("<\.*?>".decode("gbk"), "".decode("gbk"), line)  # ¹ıÂËÎÄ±¾ÖĞµÄhtml±êÇ©
+    line = re.sub("<\.*?>".decode("gbk"), "".decode("gbk"), line)  # è¿‡æ»¤æ–‡æœ¬ä¸­çš„htmlæ ‡ç­¾
     while len(line) != 0:
         if len(line) > MaxWordLen:
             testword = line[len(line) - MaxWordLen:]
@@ -71,12 +71,12 @@ def _subword(line, filename):
 
 
 def subword(filename):
-    '''½«Ö¸¶¨ÎÄ¼ş·Ö´Ê'''
+    '''å°†æŒ‡å®šæ–‡ä»¶åˆ†è¯'''
     fd = codecs.open(filename, "r", "gbk", "ignore")
     text = fd.readlines()
     for line in text:
         _subword(line, filename)
-    for val in dict.values():  # Ò»ÆªÎÄµµ·Ö´ÊÍê³É£¬°ÑÎÄµµÀÛ¼ÓÔÊĞíÖÃ0
+    for val in dict.values():  # ä¸€ç¯‡æ–‡æ¡£åˆ†è¯å®Œæˆï¼ŒæŠŠæ–‡æ¡£ç´¯åŠ å…è®¸ç½®0
         val[2] = 0
     fd.close()
 
@@ -85,11 +85,11 @@ if __name__ == "__main__":
     begintime = time.time()
     dictfile = r"C:\Users\xiaoxiong\Desktop\test\dict.txt".decode("gbk")
     establish_dict(dictfile)
-    rootdir = r"C:\Users\xiaoxiong\Desktop\test\ÌåÓı·ÖÀàÑµÁ·ÎÄµµ".decode("gbk")
+    rootdir = r"C:\Users\xiaoxiong\Desktop\test\ä½“è‚²åˆ†ç±»è®­ç»ƒæ–‡æ¡£".decode("gbk")
     findfiles(rootdir)
     # for file in filelist:
     #     print file, filelist[file]
-    FileSum = 0  # ·Ö´ÊÎÄµµ×ÜÊı
+    FileSum = 0  # åˆ†è¯æ–‡æ¡£æ€»æ•°
     for file in filelist:
         # print file,filelist[file]
         for filename in filelist[file]:
@@ -108,11 +108,11 @@ if __name__ == "__main__":
     for key2 in dict:
         resultfile.write(key2)
         resultfile.write(" ".decode("gbk"))
-        resultfile.write(math.log(FileSum / (dict[key2][1] + 1), 10) * (dict[key2][0] + 0.0) / WordSum) # Ïò½á¹ûÎÄ¼şÖĞÊä³öidf*tfÖµ
+        resultfile.write(math.log(FileSum / (dict[key2][1] + 1), 10) * (dict[key2][0] + 0.0) / WordSum) # å‘ç»“æœæ–‡ä»¶ä¸­è¾“å‡ºidf*tfå€¼
         resultfile.write("\r\n".decode("gbk"))
         newdict.write(key2)
         newdict.write(" ".decode("gbk"))
-        newdict.write(math.log(FileSum / (dict[key2][1] + 1), 10)) # ¹¹ÔìÒ»¸öĞÂµÄ×Öµä£¬ĞÎÊ½£ºword idf
+        newdict.write(math.log(FileSum / (dict[key2][1] + 1), 10)) # æ„é€ ä¸€ä¸ªæ–°çš„å­—å…¸ï¼Œå½¢å¼ï¼šword idf
         newdict.write("\r\n".decode("gbk"))
     resultfile.close()
     endtime = time.time()
