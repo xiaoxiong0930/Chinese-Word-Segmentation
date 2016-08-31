@@ -6,29 +6,29 @@ import time
 import math
 import re
 
-idfdict = {}  # ½¨Á¢×Öµä
-MaxWordLen = 4  # ×î´ó´ÊÓï³¤¶È
-WordSum = 0  # ´Ê×ÜÊı
-feature = {} # ÑµÁ·¼¯µÄÌØÕ÷¿â
-correct = 0 # ÕıÈ·µÄ·ÖÀàÎÄµµÊı
+idfdict = {}  # å»ºç«‹å­—å…¸
+MaxWordLen = 4  # æœ€å¤§è¯è¯­é•¿åº¦
+WordSum = 0  # è¯æ€»æ•°
+feature = {} # è®­ç»ƒé›†çš„ç‰¹å¾åº“
+correct = 0 # æ­£ç¡®çš„åˆ†ç±»æ–‡æ¡£æ•°
 
 
 def establish_dict(dictfile):
-    '''ÊäÈë×ÖµäÎÄ¼şµÄÂ·¾¶£¬´´½¨×ÖµäÁĞ±í'''
+    '''è¾“å…¥å­—å…¸æ–‡ä»¶çš„è·¯å¾„ï¼Œåˆ›å»ºå­—å…¸åˆ—è¡¨'''
     fd = codecs.open(dictfile, "r", "gbk")
-    texts = fd.readlines()  # ¶ÁÈ¡×ÖµäÎÄ¼şÈëlist
+    texts = fd.readlines()  # è¯»å–å­—å…¸æ–‡ä»¶å…¥list
     for line in texts:
         li = re.findall(r"(.*?) (.*)\r\n".decode("gbk"), line, re.S)
         idf = float(li[0][1])
         word = li[0][0]
-        idfdict[word] = [0, idf, 0.0]  # µÚÒ»¸ö²ÎÊıÊÇ³öÏÖµÄ´ÎÊı£¬ºóÒ»¸ö²ÎÊıÊÇidf,×îºóÒ»Ê×Ò»¸öÀ´´æ·Åidf*tf
+        idfdict[word] = [0, idf, 0.0]  # ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯å‡ºç°çš„æ¬¡æ•°ï¼Œåä¸€ä¸ªå‚æ•°æ˜¯idf,æœ€åä¸€é¦–ä¸€ä¸ªæ¥å­˜æ”¾idf*tf
     fd.close()
 
 
 def findfiles(rootdir):
-    '''ÊäÈëÎÄ¼şÂ·¾¶£¬ÕÒÑ°Â·¾¶ÏÂËùÓĞÎÄ¼şµÄÎÄ¼şÃû£¬²¢·µ»ØÎÄ¼şÃûÁĞ±í'''
-    filelist = {}  # ½¨Á¢×Öµä£¬¼üÖµÊÇÀàÃû£¬ÖµÎªÎÄ¼şÃû
-    for parent, dirnames, filenames in os.walk(rootdir):  # Èı¸ö²ÎÊı£º·Ö±ğ·µ»Ø1.¸¸Ä¿Â¼ 2.ËùÓĞÎÄ¼ş¼ĞÃû×Ö£¨²»º¬Â·¾¶£© 3.ËùÓĞÎÄ¼şÃû×Ö
+    '''è¾“å…¥æ–‡ä»¶è·¯å¾„ï¼Œæ‰¾å¯»è·¯å¾„ä¸‹æ‰€æœ‰æ–‡ä»¶çš„æ–‡ä»¶åï¼Œå¹¶è¿”å›æ–‡ä»¶ååˆ—è¡¨'''
+    filelist = {}  # å»ºç«‹å­—å…¸ï¼Œé”®å€¼æ˜¯ç±»åï¼Œå€¼ä¸ºæ–‡ä»¶å
+    for parent, dirnames, filenames in os.walk(rootdir):  # ä¸‰ä¸ªå‚æ•°ï¼šåˆ†åˆ«è¿”å›1.çˆ¶ç›®å½• 2.æ‰€æœ‰æ–‡ä»¶å¤¹åå­—ï¼ˆä¸å«è·¯å¾„ï¼‰ 3.æ‰€æœ‰æ–‡ä»¶åå­—
         for dirname in dirnames:
             filelist[dirname] = []
             for sports, dirnames, filenames in os.walk(parent + "\\".decode("gbk") + dirname):
@@ -38,22 +38,22 @@ def findfiles(rootdir):
 
 
 def ans(testword):
-    '''×î´ó·´ÏòÆ¥Åä²âÊÔÃ¿¸ö²âÊÔ×Ö·û´®ÖĞÊÇ·ñ´æÔÚ·Ö´Ê'''
+    '''æœ€å¤§åå‘åŒ¹é…æµ‹è¯•æ¯ä¸ªæµ‹è¯•å­—ç¬¦ä¸²ä¸­æ˜¯å¦å­˜åœ¨åˆ†è¯'''
     global WordSum, idfdict
     for i in range(len(testword)):
         word = testword[i:]
         if word in idfdict:
-            idfdict[word][0] += 1  # ´ÊÆµ¼ÆÊıÆ÷¼Ó1
+            idfdict[word][0] += 1  # è¯é¢‘è®¡æ•°å™¨åŠ 1
             WordSum += 1
             break
     return len(testword) - i
 
 
 def _subword(line, filename):
-    '''½«Ö¸¶¨×Ö·û´®·Ö´Ê'''
+    '''å°†æŒ‡å®šå­—ç¬¦ä¸²åˆ†è¯'''
     result = []
     line = re.sub("<.*?>".decode("gbk"), "".decode("gbk"), line)
-    line = re.sub("<\.*?>".decode("gbk"), "".decode("gbk"), line)  # ¹ıÂËÎÄ±¾ÖĞµÄhtml±êÇ©
+    line = re.sub("<\.*?>".decode("gbk"), "".decode("gbk"), line)  # è¿‡æ»¤æ–‡æœ¬ä¸­çš„htmlæ ‡ç­¾
     while len(line) != 0:
         if len(line) > MaxWordLen:
             testword = line[len(line) - MaxWordLen:]
@@ -71,7 +71,7 @@ def _subword(line, filename):
 
 
 def subword(filename):
-    '''½«Ö¸¶¨ÎÄ¼ş·Ö´Ê'''
+    '''å°†æŒ‡å®šæ–‡ä»¶åˆ†è¯'''
     fd = codecs.open(filename, "r", "gbk", "ignore")
     text = fd.readlines()
     for line in text:
@@ -81,7 +81,7 @@ def subword(filename):
 
 def es_feature():
     global WordSum, feature, idfdict
-    rootdir = r"C:\Users\xiaoxiong\Desktop\test\ÌåÓı·ÖÀàÑµÁ·ÎÄµµ".decode("gbk")
+    rootdir = r"C:\Users\xiaoxiong\Desktop\test\ä½“è‚²åˆ†ç±»è®­ç»ƒæ–‡æ¡£".decode("gbk")
     filelist = findfiles(rootdir)
     featurefile = codecs.open(r"C:\Users\xiaoxiong\Desktop\test\feature.txt", "w", "gbk", "ignore")
     for file in filelist:
@@ -93,13 +93,13 @@ def es_feature():
             else:
                 filename = rootdir + "\\".decode("gbk") + file + "\\".decode("gbk") + filename
                 subword(filename)
-        for word in idfdict:  # ¼ÆËãidf*tfÖµ
+        for word in idfdict:  # è®¡ç®—idf*tfå€¼
             idfdict[word][2] = (idfdict[word][0] + 0.0 / WordSum) * idfdict[word][1]
-        static = sorted(idfdict.iteritems(), key=lambda d: d[1][2], reverse=True)  # ÅÅĞò
+        static = sorted(idfdict.iteritems(), key=lambda d: d[1][2], reverse=True)  # æ’åº
         num = 20
-        feature[file] = []  # ´æ´¢Ã¿¸öÀàµÄÌØÕ÷´Ê
+        feature[file] = []  # å­˜å‚¨æ¯ä¸ªç±»çš„ç‰¹å¾è¯
         featurefile.write("#" + file + "\r\n".decode("gbk"))
-        for i in range(num):  # Êä³ö×î´óµÄ20¸ö´Ê
+        for i in range(num):  # è¾“å‡ºæœ€å¤§çš„20ä¸ªè¯
             featurefile.write(static[i][0])
             featurefile.write("\r\n".decode("gbk"))
             feature[file].append(static[i][0])
@@ -112,11 +112,11 @@ def es_feature():
 
 def classify():
     global WordSum, feature, idfdict, correct
-    tmp_feature = {}  # Ã¿¸öÎÄ¼şµÄÌØÕ÷
-    hit_class = {} # ÃüÖĞµÄ·ÖÀà
+    tmp_feature = {}  # æ¯ä¸ªæ–‡ä»¶çš„ç‰¹å¾
+    hit_class = {} # å‘½ä¸­çš„åˆ†ç±»
     resultfile = r"C:\Users\xiaoxiong\Desktop\test\classify.txt".decode("gbk")
     fd = codecs.open(resultfile,"w","gbk")
-    rootdir = r"C:\Users\xiaoxiong\Desktop\test\ÌåÓı·ÖÀà²âÊÔÎÄµµ".decode("gbk")
+    rootdir = r"C:\Users\xiaoxiong\Desktop\test\ä½“è‚²åˆ†ç±»æµ‹è¯•æ–‡æ¡£".decode("gbk")
     filelist = findfiles(rootdir)
     for file in filelist:
         for filename in filelist[file]:
@@ -127,9 +127,9 @@ def classify():
             else:
                 filename = rootdir + "\\".decode("gbk") + file + "\\".decode("gbk") + filename
                 subword(filename)
-                for word in idfdict:  # ¼ÆËãidf*tfÖµ
+                for word in idfdict:  # è®¡ç®—idf*tfå€¼
                     idfdict[word][2] = (idfdict[word][0] + 0.0 / WordSum) * idfdict[word][1]
-                static = sorted(idfdict.iteritems(), key=lambda d: d[1][2], reverse=True)  # ÅÅĞò
+                static = sorted(idfdict.iteritems(), key=lambda d: d[1][2], reverse=True)  # æ’åº
                 num = 20
                 tmp_feature[filename] = []
                 for i in range(num):
